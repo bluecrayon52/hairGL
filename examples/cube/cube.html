@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <title>triangle</title>
     <link href="css/default.css" rel ="stylesheet" />
+    <script src="/glmatrix/gl-matrix-min.js"></script>
 </head>
 
 <body>
@@ -15,9 +16,13 @@
         in vec4 color; 
         out vec4 fcolor; 
 
-        void main()
-        {
-            gl_Position = vec4(position, 1);
+        uniform mat4 modelMatrix;
+        uniform mat4 viewMatrix; 
+        uniform mat4 projectionMatrix;
+
+
+        void main(){
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
             fcolor = color;
         }
     </script>

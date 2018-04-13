@@ -1,0 +1,29 @@
+{
+  "name": "hair-gl",
+  "version": "1.0.0",
+  "description": "modeling hair follicles using webGL",
+  "main": "js/main.js",
+  "directories": {
+    "example": "examples",
+    "css": "css",
+    "images": "images",
+    "js": "js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluecrayon52/hairGL.git"
+  },
+  "author": "Nathaniel Clay Arnold",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bluecrayon52/hairGL/issues"
+  },
+  "homepage": "https://github.com/bluecrayon52/hairGL#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "gl-matrix": "^2.4.0"
+  }
+}

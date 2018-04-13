@@ -8,6 +8,7 @@ function start()
     var canvas = document.getElementById("renderCanvas");
     gl = canvas.getContext("webgl2");
 
+//-------------------------------------------[Triangle Vertices]-------------------------------------------------//
     // on the CPU
     var triangleVertices = [
         1.0, -1.0, 0.0,
@@ -22,6 +23,8 @@ function start()
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer); 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
 
+
+ //-------------------------------------------[Triangle Colors]--------------------------------------------------//
     // on the CPU
     var triangleColors = [
         1.0, 0.0, 0.0, 1.0, 
@@ -36,7 +39,10 @@ function start()
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleColors), gl.STATIC_DRAW);
 
-    // x, y, z, 
+ //-------------------------------------------[Triangle Vertices and Colors]-------------------------------------//
+
+    // Vertices and Colors in one matrix
+    // Three vertices (x, y, z) (1-3 on each line) and color attributes( 4-7 on each line)
     var triangleVerticesAndColors = [
         1.0, -1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 
         0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 
@@ -46,6 +52,8 @@ function start()
     var triangleVertexPositionAndColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionAndColorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVerticesAndColors), gl.STATIC_DRAW);
+
+ //-------------------------------------------[The Rest]-------------------------------------------------------//
 
     var vertexShader = getAndCompileShader("vertexShader");
     var fragmentShader = getAndCompileShader("fragmentShader");
@@ -65,31 +73,35 @@ function start()
 
     var positionAttributeLocation = gl.getAttribLocation(shaderProgram, "position");
     gl.enableVertexAttribArray(positionAttributeLocation);
-    // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-    // // void  gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
-    // gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+    /* For Seperate Buffers (Vertices)
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    // void  gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
+    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+    */
 
     var colorAttributeLocation = gl.getAttribLocation(shaderProgram, "color");
     gl.enableVertexAttribArray(colorAttributeLocation);
-    // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
-    // // void  gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
-    // gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
 
-    const FLOAT_SIZE = 4; 
+    /* For Seperate Buffers (Colors)
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
+    // void  gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
+    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+    */
+
+    // For one Buffer (Vertices and Colors)
+    const FLOAT_SIZE = 4; // used to calculate the stride, one float is 4 bytes, 7 numbers in each line
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionAndColorBuffer);
     gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 7*FLOAT_SIZE, 0);
-    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 7*FLOAT_SIZE, 3*FLOAT_SIZE);
+    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 7*FLOAT_SIZE, 3*FLOAT_SIZE); // offset 3 floats
 
     requestAnimationFrame(runRenderLoop);
     
     function runRenderLoop()
     {
-        gl.clearColor(0, 0, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        // var vao = gl.createVertexArray();
-        // gl.bindVertexArray(vao);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.clearColor(0, 0, 0, 1);  // background color
+        gl.clear(gl.COLOR_BUFFER_BIT); // clear canvas 
+        gl.drawArrays(gl.TRIANGLES, 0, 3);  // let webgl know every three consecutive virtices will be a triangle 
 
         requestAnimationFrame(runRenderLoop);
     }
