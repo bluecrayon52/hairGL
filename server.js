@@ -22,7 +22,12 @@ app.get('/cube', function(req, res) {
     res.sendFile('/cube/cube.html', {root: ex_dir});
 });
 
-// routes to serve the static HTML file for cube 
+// routes to serve the static HTML file for four cubes 
 app.get('/fourCubes', function(req, res) {
     res.sendFile('/fourCubes/fourCubes.html', {root: ex_dir});
+});
+
+// routes to serve the static HTML file for cube instances
+app.get('/cubeInstances', function(req, res) {
+    res.sendFile('/cubeInstances/cubeInstances.html', {root: ex_dir});
 });
