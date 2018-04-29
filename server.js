@@ -12,13 +12,17 @@ app.use('/glmatrix', express.static(__dirname + '/node_modules/gl-matrix/dist/')
 // a convenient variable to refer to the HTML directory
 var ex_dir = './examples/';
 
-// routes to serve the static HTML files
+// routes to serve the static HTML file for triangle
 app.get('/triangle', function(req, res) {
-    res.sendfile(ex_dir + '/triangle/triangle.html');
+    res.sendFile('/triangle/triangle.html', {root: ex_dir});
 });
 
-// routes to serve the static HTML files
+// routes to serve the static HTML file for cube 
 app.get('/cube', function(req, res) {
-    res.sendfile(ex_dir + '/cube/cube.html');
+    res.sendFile('/cube/cube.html', {root: ex_dir});
 });
 
+// routes to serve the static HTML file for cube 
+app.get('/fourCubes', function(req, res) {
+    res.sendFile('/fourCubes/fourCubes.html', {root: ex_dir});
+});
