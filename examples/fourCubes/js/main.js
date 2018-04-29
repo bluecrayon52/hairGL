@@ -96,7 +96,7 @@ function createCube(){
 
 function start(){
 
-    console.log("hello from the Cube");
+    console.log("hello from the Four Cubes");
     var canvas = document.getElementById("renderCanvas");
     gl = canvas.getContext("webgl2");
 

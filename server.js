@@ -31,3 +31,8 @@ app.get('/fourCubes', function(req, res) {
 app.get('/cubeInstances', function(req, res) {
     res.sendFile('/cubeInstances/cubeInstances.html', {root: ex_dir});
 });
+
+// routes to serve the static HTML file for optimized rectangle
+app.get('/rectangle', function(req, res) {
+    res.sendFile('/rectangle/rectangle.html', {root: ex_dir});
+});

@@ -4,7 +4,7 @@ var gl;
 
 function start()
 {
-    console.log("hello from hairGL!");
+    console.log("hello from the Triangle");
     var canvas = document.getElementById("renderCanvas");
     gl = canvas.getContext("webgl2");
 
