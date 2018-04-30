@@ -9,6 +9,8 @@ app.use(express.static(path.join(__dirname, 'examples')));
 
 app.use('/glmatrix', express.static(__dirname + '/node_modules/gl-matrix/dist/'));
 
+app.use('/images', express.static(__dirname + '/images/'));
+
 // a convenient variable to refer to the HTML directory
 var ex_dir = './examples/';
 
@@ -35,4 +37,9 @@ app.get('/cubeInstances', function(req, res) {
 // routes to serve the static HTML file for optimized rectangle
 app.get('/rectangle', function(req, res) {
     res.sendFile('/rectangle/rectangle.html', {root: ex_dir});
+});
+
+// routes to serve the static HTML file for cube texture
+app.get('/cubeTexture', function(req, res) {
+    res.sendFile('/cubeTexture/cubeTexture.html', {root: ex_dir});
 });
