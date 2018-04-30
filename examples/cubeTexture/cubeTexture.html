@@ -14,10 +14,10 @@
         #version 300 es 
         in vec3 position; 
         in vec4 color;
-        in vec2 textureCoordinate; 
+        in vec2 textureCoordinate1;
 
         out vec4 fcolor;
-        out vec2 ftextureCoordinate;  
+        out vec2 ftextureCoordinate1;   
 
         uniform mat4 modelMatrix;
         uniform mat4 viewMatrix; 
@@ -27,20 +27,23 @@
         void main(){
             gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
             fcolor = color;
-            ftextureCoordinate = textureCoordinate;
+            ftextureCoordinate1 = textureCoordinate1;                    
         }
     </script>
     <script id="fragmentShader" type="fragmentShader">
         #version 300 es
         precision mediump float;
         in vec4 fcolor; 
-        in vec2 ftextureCoordinate; 
+        in vec2 ftextureCoordinate1; 
+
+        // textures 
         uniform sampler2D sampler1; 
-        out vec4 finalColor;
+
+        out vec4 finalColor1;
 
         void main()
         {
-            finalColor = texture(sampler1, ftextureCoordinate); 
+            finalColor1 = texture(sampler1, ftextureCoordinate1); 
         }
 
     </script>
