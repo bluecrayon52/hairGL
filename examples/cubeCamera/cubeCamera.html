@@ -19,13 +19,14 @@
         out vec4 fcolor;
         out vec2 ftextureCoordinate1;   
 
+        uniform vec4 offsets;
         uniform mat4 modelMatrix;
         uniform mat4 viewMatrix; 
         uniform mat4 projectionMatrix;
 
 
         void main(){
-            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position.x + offsets[gl_InstanceID], position.y, position.z, 1);
             fcolor = color;
             ftextureCoordinate1 = textureCoordinate1;                    
         }

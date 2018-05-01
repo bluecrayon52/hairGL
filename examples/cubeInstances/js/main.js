@@ -123,7 +123,6 @@ function start(){
 
         gl.uniform1f(timeUniformLocation, currentTime);
 
-   
         gl.useProgram(cube.shaderProgram);
         gl.bindVertexArray(cube.vao);
         gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points

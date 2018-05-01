@@ -30,27 +30,6 @@ function createCube(){
     gl.bindBuffer(gl.ARRAY_BUFFER, cube.positionBuffer); 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cube.vertices), gl.STATIC_DRAW);
 
-    // rgba values
-    var faceColors = [
-        [1.0, 0.0, 0.0, 1.0],   // front face 
-        [0.0, 1.0, 0.0, 1.0],   // back face 
-        [0.0, 0.0, 1.0, 1.0],   // tope face 
-        [1.0, 1.0, 0.0, 1.0],   // bottom face 
-        [1.0, 0.0, 1.0, 1.0],   // right face 
-        [0.0, 1.0, 1.0, 1.0]    // left face 
-    ];
-
-     // on the CPU
-    cube.colors = [];
-
-    // cannot pass face colors to GBU 
-    // loop over colors and assign to vertices 
-    faceColors.forEach((color)=>{
-        for(var i = 0; i < 6; i++){
-            cube.colors = cube.colors.concat(color);
-        }
-    });
-
     cube.textureCoordinates = [
         0.0, 0.0,
         1.0, 0.0,
@@ -101,12 +80,6 @@ function createCube(){
     gl.bindBuffer(gl.ARRAY_BUFFER, cube.positionBuffer); 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cube.vertices), gl.STATIC_DRAW);
 
-    // on the GPU
-    cube.colorBuffer = gl.createBuffer(); 
-    // Gate between the CPU and GPU
-    gl.bindBuffer(gl.ARRAY_BUFFER, cube.colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cube.colors), gl.STATIC_DRAW);
-
     // on GPU 
     cube.textureCoordinatesBuffer = gl.createBuffer(); 
     // Gate between the CPU and GPU
@@ -116,7 +89,7 @@ function createCube(){
     //----------------------------------------TEXTURE 1-------------------------------------------------//
     cube.texture1 = gl.createTexture(); 
     cube.texture1.image = new Image(); 
-    cube.texture1.image.src = "/images/desert_stone_512.jpg";
+    cube.texture1.image.src = "/images/windows_512.jpg";
 
     // overwrite onload function
     cube.texture1.image.onload = () => {
@@ -134,44 +107,6 @@ function createCube(){
          // another option used to select pixel matching when there is not a 1 to 1 ratio
          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); 
          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);    
-    } 
-
-    //----------------------------------------TEXTURE 2-------------------------------------------------//
-    cube.texture2 = gl.createTexture(); 
-    cube.texture2.image = new Image(); 
-    cube.texture2.image.src = "/images/cream_wave_1024.jpg";
-
-    // overwrite onload function
-    cube.texture2.image.onload = () => {
-
-        // yet another Gate hath opened 
-        gl.bindTexture( gl.TEXTURE_2D, cube.texture2);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        // void gl.texImage2D(target, level, internalformat, format, type, HTMLImageElement? pixels);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube.texture2.image); 
-
-         // another option used to select pixel matching when there is not a 1 to 1 ratio
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); 
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);  
-    } 
-
-    //----------------------------------------TEXTURE 3-------------------------------------------------//
-    cube.texture3 = gl.createTexture(); 
-    cube.texture3.image = new Image(); 
-    cube.texture3.image.src = "/images/stone_cube_256.png";
-
-    // overwrite onload function
-    cube.texture3.image.onload = () => {
-
-        // yet another Gate hath opened 
-        gl.bindTexture( gl.TEXTURE_2D, cube.texture3);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        // void gl.texImage2D(target, level, internalformat, format, type, HTMLImageElement? pixels);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube.texture3.image); 
-
-         // another option used to select pixel matching when there is not a 1 to 1 ratio
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); 
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);  
     } 
 
     cube.vertexShader = getAndCompileShader("vertexShader");
@@ -195,12 +130,6 @@ function createCube(){
     // void  gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
     gl.vertexAttribPointer(cube.positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
-    cube.colorAttributeLocation = gl.getAttribLocation(cube.shaderProgram, "color");
-    gl.enableVertexAttribArray(cube.colorAttributeLocation);
-    gl.bindBuffer(gl.ARRAY_BUFFER, cube.colorBuffer);
-    // void  gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
-    gl.vertexAttribPointer(cube.colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
-
     cube.textureCoordinateAttributeLocation = gl.getAttribLocation(cube.shaderProgram, "textureCoordinate1");
     gl.enableVertexAttribArray(cube.textureCoordinateAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, cube.textureCoordinatesBuffer);
@@ -216,25 +145,20 @@ function createCube(){
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, cube.texture1);
-    // gl.uniform1i(cube.samplerUniformLocation, 0); 
+    gl.uniform1i(cube.samplerUniformLocation, 0); // move this line inside the loop if using multiple textures
 
-    gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, cube.texture2);
-    // gl.uniform1i(cube.samplerUniformLocation, 0); 
-
-    gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, cube.texture3);
-    
     return cube; 
 }
 
 function start(){
 
-    console.log("hello from the Four Cubes");
+    console.log("hello from the Cube Camera");
     var canvas = document.getElementById("renderCanvas");
     gl = canvas.getContext("webgl2");
 
     var cube = createCube();
+
+    var offsetsVector = vec4.fromValues(-1, 0, 1, 2); 
 
     var viewMatrix = mat4.create();
     var projectionMatrix = mat4.create();
@@ -246,7 +170,7 @@ function start(){
     var viewMatrixLocation = gl.getUniformLocation(cube.shaderProgram, "viewMatrix");
     var projectionMatrixLocation = gl.getUniformLocation(cube.shaderProgram, "projectionMatrix");
 
-    var angle = 0;  // another way of incrementing the angle
+    var offsetUniformLocation = gl.getUniformLocation(cube.shaderProgram, "offsets");
 
     // define camera object with initial values
     var camera = {position: vec3.fromValues(0,0,0), direction: vec3.fromValues(0,0,-1), pitch: 0, yaw: -1*Math.PI/2.0};
@@ -264,62 +188,167 @@ function start(){
 
         // update our view matrix on the regular (perameters: output, eye matrix, target, and up)
         mat4.lookAt(viewMatrix, camera.position, target, vec3.fromValues(0,1,0))
-
-
-        // --------------First Cube------------------------------------------------------------------------------------ 
-        // mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
-
-        // mat4.translate(cube.modelMatrix, cube.modelMatrix, [-2, 0, -5]);  // LEFT and push cube away from camera in negative z direction 
-        // // mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
-        // // mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
-        // angle += 0.01;    // another way of incrementing the angle
-
-        // gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-        // gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
-        // gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
-        // gl.uniform1i(cube.samplerUniformLocation, 0); // change the texture used
-
-        // gl.useProgram(cube.shaderProgram);
-        // gl.bindVertexArray(cube.vao);
-        // gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
         
-        // --------------Second Cube------------------------------------------------------------------------------------ 
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
         mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
 
-        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 0, -5]);  // MIDDLE and push cube away from camera in negative z direction 
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 0, -9]);  // MIDDLE and push cube away from camera in negative z direction 
         // mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
         // mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
-        angle += 0.01;    // another way of incrementing the angle
 
         gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
         gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
         gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
-        gl.uniform1i(cube.samplerUniformLocation, 2); // change the texture used
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
 
         gl.useProgram(cube.shaderProgram);
         gl.bindVertexArray(cube.vao);
-        gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
 
-         // --------------Third Cube------------------------------------------------------------------------------------ 
-        //  mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
 
-        //  mat4.translate(cube.modelMatrix, cube.modelMatrix, [2, 0, -5]);  // RIGHT and push cube away from camera in negative z direction 
-        // //  mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
-        // //  mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
-        //  angle += 0.01;    // another way of incrementing the angle
- 
-        //  gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-        //  gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
-        //  gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
-        //  gl.uniform1i(cube.samplerUniformLocation, 1); // change the texture used
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [-2, 0, -7]);  // MIDDLE and push cube away from camera in negative z direction 
+        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, Math.PI/2);
 
-        //  gl.useProgram(cube.shaderProgram);
-        //  gl.bindVertexArray(cube.vao);
-        //  gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [-2, 1, -5]);  // MIDDLE and push cube away from camera in negative z direction 
+        mat4.rotateZ(cube.modelMatrix, cube.modelMatrix, Math.PI/2);
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [3, -2, -9]);  // MIDDLE and push cube away from camera in negative z direction 
+        mat4.rotateZ(cube.modelMatrix, cube.modelMatrix, Math.PI/2);
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [3, -3, -6]);  // MIDDLE and push cube away from camera in negative z direction 
+        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, Math.PI/2);
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 3, -5]);  // MIDDLE and push cube away from camera in negative z direction 
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, -3, -5]);  // MIDDLE and push cube away from camera in negative z direction 
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [3, 3, -6]);  // MIDDLE and push cube away from camera in negative z direction 
+        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, Math.PI/2);
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [-2, -3, -6]);  // MIDDLE and push cube away from camera in negative z direction 
+        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, Math.PI/2);
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
+
+        // -------------- Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 3, -8]);  // MIDDLE and push cube away from camera in negative z direction 
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(offsetUniformLocation, offsetsVector);
+
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 4);  // 3 instances
 
         requestAnimationFrame(runRenderLoop);
     }
-
 }
 
 function getAndCompileShader(id){
