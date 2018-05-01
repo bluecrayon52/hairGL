@@ -43,3 +43,8 @@ app.get('/rectangle', function(req, res) {
 app.get('/cubeTexture', function(req, res) {
     res.sendFile('/cubeTexture/cubeTexture.html', {root: ex_dir});
 });
+
+// routes to serve the static HTML file for cube texture
+app.get('/cubeCamera', function(req, res) {
+    res.sendFile('/cubeCamera/cubeCamera.html', {root: ex_dir});
+});

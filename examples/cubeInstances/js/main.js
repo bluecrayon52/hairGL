@@ -82,7 +82,7 @@ function start(){
     var projectionMatrix = mat4.create();
 
     // make a camera 
-    mat4.perspective(projectionMatrix, 45*Math.PI/180.0, canvas.width/canvas.height, 0.1, 30); 
+    mat4.perspective(projectionMatrix, 45*Math.PI/180.0, canvas.width/canvas.height, 0.1, 100); 
     requestAnimationFrame(runRenderLoop);
 
     var viewMatrixLocation = gl.getUniformLocation(cube.shaderProgram, "viewMatrix", );
@@ -103,14 +103,13 @@ function start(){
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
         gl.enable(gl.DEPTH_TEST);
 
-        // --------------First Cube------------------------------------------------------------------------------------ 
+        // --------------Bottom Three Cubes------------------------------------------------------------------------------------ 
         mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
 
-        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 0, -6]);  // LEFT and push cube away from camera in negative z direction 
-        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, -2, -10]);  // DOWN and push cube away from camera in negative z direction 
+        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle/8);
         mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
         angle += 0.02;    // another way of incrementing the angle
-        currentTime += 0.02; // increase time for color change
 
         gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
         gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
@@ -130,6 +129,61 @@ function start(){
         gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
         gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 3);  // 3 instances 
         
+        // --------------Middle Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 0, -10]);  // push cube away from camera in negative z direction 
+        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, -angle/8);
+        mat4.rotateX(cube.modelMatrix, cube.modelMatrix, -angle/8);
+        angle += 0.02;    // another way of incrementing the angle
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(colorsUniformArrayLocation0, uniformColorsArray[0]); // vector of four floats
+        gl.uniform4fv(colorsUniformArrayLocation1, uniformColorsArray[1]); // vector of four floats
+        gl.uniform4fv(colorsUniformArrayLocation2, uniformColorsArray[2]); // vector of four floats
+
+        gl.uniform3fv(offsetUniformLocation, offsetsVector); // vector of three floats
+
+        gl.uniform1f(timeUniformLocation, currentTime);
+
+   
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 3);  // 3 instances 
+
+        // --------------Top Three Cubes------------------------------------------------------------------------------------ 
+        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+
+        mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 2, -10]);  // UP and push cube away from camera in negative z direction 
+        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle/8);
+        mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
+        angle += 0.02;    // another way of incrementing the angle
+        
+
+        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+
+        gl.uniform4fv(colorsUniformArrayLocation0, uniformColorsArray[0]); // vector of four floats
+        gl.uniform4fv(colorsUniformArrayLocation1, uniformColorsArray[1]); // vector of four floats
+        gl.uniform4fv(colorsUniformArrayLocation2, uniformColorsArray[2]); // vector of four floats
+
+        gl.uniform3fv(offsetUniformLocation, offsetsVector); // vector of three floats
+
+        gl.uniform1f(timeUniformLocation, currentTime);
+
+   
+        gl.useProgram(cube.shaderProgram);
+        gl.bindVertexArray(cube.vao);
+        gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, 36, 3);  // 3 instances 
+
+        currentTime += 0.2; // increase time for color change
+
         requestAnimationFrame(runRenderLoop);
     }
 

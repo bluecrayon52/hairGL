@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>cube camera</title>
+    <link href="css/default.css" rel ="stylesheet" />
+    <script src="/glmatrix/gl-matrix-min.js"></script>
+</head>
+
+<body>
+    <canvas id="renderCanvas" width="1650" height="950"></canvas>
+    <script src="js/main.js"></script>
+    <script id="vertexShader" type="vertexShader">
+        #version 300 es 
+        in vec3 position; 
+        in vec4 color;
+        in vec2 textureCoordinate1;
+
+        out vec4 fcolor;
+        out vec2 ftextureCoordinate1;   
+
+        uniform mat4 modelMatrix;
+        uniform mat4 viewMatrix; 
+        uniform mat4 projectionMatrix;
+
+
+        void main(){
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
+            fcolor = color;
+            ftextureCoordinate1 = textureCoordinate1;                    
+        }
+    </script>
+    <script id="fragmentShader" type="fragmentShader">
+        #version 300 es
+        precision mediump float;
+        in vec4 fcolor; 
+        in vec2 ftextureCoordinate1; 
+
+        // textures 
+        uniform sampler2D sampler1; 
+
+        out vec4 finalColor1;
+
+        void main()
+        {
+            finalColor1 = texture(sampler1, ftextureCoordinate1); 
+        }
+
+    </script>
+
+</body>
+
+</html>

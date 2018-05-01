@@ -239,43 +239,55 @@ function start(){
     var viewMatrix = mat4.create();
     var projectionMatrix = mat4.create();
 
-    // make a camera 
-    mat4.perspective(projectionMatrix, 45*Math.PI/180.0, canvas.width/canvas.height, 0.1, 30); 
+    // make perspective view (last perameter is far plane)
+    mat4.perspective(projectionMatrix, 45*Math.PI/180.0, canvas.width/canvas.height, 0.1, 100); 
     requestAnimationFrame(runRenderLoop);
 
     var viewMatrixLocation = gl.getUniformLocation(cube.shaderProgram, "viewMatrix");
     var projectionMatrixLocation = gl.getUniformLocation(cube.shaderProgram, "projectionMatrix");
 
-    // var angle = .1; // define the increment of rotation 
     var angle = 0;  // another way of incrementing the angle
-    
+
+    // define camera object with initial values
+    var camera = {position: vec3.fromValues(0,0,0), direction: vec3.fromValues(0,0,-1), pitch: 0, yaw: -1*Math.PI/2.0};
+   
     function runRenderLoop(){
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
         gl.enable(gl.DEPTH_TEST);
 
+        //check the keys that are being pressed and change positions 
+        moveCamera(camera); 
+        var target = vec3.create();
+        // update camera target (forces you to look in negative z directiony only)
+        vec3.add(target, camera.position, camera.direction);
+
+        // update our view matrix on the regular (perameters: output, eye matrix, target, and up)
+        mat4.lookAt(viewMatrix, camera.position, target, vec3.fromValues(0,1,0))
+
+
         // --------------First Cube------------------------------------------------------------------------------------ 
-        mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+        // mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
 
-        mat4.translate(cube.modelMatrix, cube.modelMatrix, [-2, 0, -5]);  // LEFT and push cube away from camera in negative z direction 
-        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
-        // mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
-        angle += 0.01;    // another way of incrementing the angle
+        // mat4.translate(cube.modelMatrix, cube.modelMatrix, [-2, 0, -5]);  // LEFT and push cube away from camera in negative z direction 
+        // // mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
+        // // mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
+        // angle += 0.01;    // another way of incrementing the angle
 
-        gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
-        gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
-        gl.uniform1i(cube.samplerUniformLocation, 0); // change the texture used
+        // gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        // gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        // gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+        // gl.uniform1i(cube.samplerUniformLocation, 0); // change the texture used
 
-        gl.useProgram(cube.shaderProgram);
-        gl.bindVertexArray(cube.vao);
-        gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
+        // gl.useProgram(cube.shaderProgram);
+        // gl.bindVertexArray(cube.vao);
+        // gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
         
         // --------------Second Cube------------------------------------------------------------------------------------ 
         mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
 
         mat4.translate(cube.modelMatrix, cube.modelMatrix, [0, 0, -5]);  // MIDDLE and push cube away from camera in negative z direction 
-        mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
+        // mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
         // mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
         angle += 0.01;    // another way of incrementing the angle
 
@@ -289,21 +301,21 @@ function start(){
         gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
 
          // --------------Third Cube------------------------------------------------------------------------------------ 
-         mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
+        //  mat4.identity(cube.modelMatrix);   // another way of incrementing the angle
 
-         mat4.translate(cube.modelMatrix, cube.modelMatrix, [2, 0, -5]);  // RIGHT and push cube away from camera in negative z direction 
-         mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
-        //  mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
-         angle += 0.01;    // another way of incrementing the angle
+        //  mat4.translate(cube.modelMatrix, cube.modelMatrix, [2, 0, -5]);  // RIGHT and push cube away from camera in negative z direction 
+        // //  mat4.rotateY(cube.modelMatrix, cube.modelMatrix, angle);
+        // //  mat4.rotateX(cube.modelMatrix, cube.modelMatrix, angle/8);
+        //  angle += 0.01;    // another way of incrementing the angle
  
-         gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-         gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
-         gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
-         gl.uniform1i(cube.samplerUniformLocation, 1); // change the texture used
+        //  gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+        //  gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
+        //  gl.uniformMatrix4fv(cube.modelMatrixLocation, false, cube.modelMatrix);
+        //  gl.uniform1i(cube.samplerUniformLocation, 1); // change the texture used
 
-         gl.useProgram(cube.shaderProgram);
-         gl.bindVertexArray(cube.vao);
-         gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
+        //  gl.useProgram(cube.shaderProgram);
+        //  gl.bindVertexArray(cube.vao);
+        //  gl.drawArrays(gl.TRIANGLES, 0, 36); // rendering 36 points
 
         requestAnimationFrame(runRenderLoop);
     }
@@ -331,4 +343,173 @@ function getAndCompileShader(id){
     }
 
     return shader; 
+}
+
+var isLDown = false; 
+var isRDown = false; 
+var isUDown = false; 
+var isDDown = false; 
+
+var isADown = false;
+var isSDown = false; 
+
+var isWDown = false; 
+var isZDown = false; 
+
+// press keys down 
+document.addEventListener("keydown", (event)=> {
+
+    // left arrow key
+    if (event.keyCode == 37){
+        isLDown = true;         
+    }
+
+    // right arrow key
+    if (event.keyCode == 39){
+        isRDown = true;
+    }
+
+    // up arrow key
+    if (event.keyCode == 38){
+        isUDown = true; 
+    }
+
+    // down arrow key
+    if (event.keyCode == 40){
+        isDDown = true;
+    }
+
+    // A key 
+    if (event.keyCode == 65){
+        isADown = true;
+    }
+
+    // S key
+    if (event.keyCode == 83){
+        isSDown = true;
+    }
+
+     // W key
+     if (event.keyCode == 87){
+        isWDown = true;
+    }
+
+     // Z key
+     if (event.keyCode == 90){
+        isZDown = true;
+    }
+});
+
+// release keys 
+document.addEventListener("keyup", (event)=> {
+
+    // left arrow key
+    if (event.keyCode == 37){
+        isLDown = false; 
+    }
+
+    // right arrow key
+    if (event.keyCode == 39){
+        isRDown = false;
+    }
+
+    // up arrow key
+    if (event.keyCode == 38){
+        isUDown = false; 
+    }
+
+    // down arrow key
+    if (event.keyCode == 40){
+        isDDown = false;
+    }
+
+    // A key 
+    if (event.keyCode == 65){
+    isADown = false;
+    }
+
+    // S key
+    if (event.keyCode == 83){
+        isSDown = false;
+    }
+
+    // W key
+    if (event.keyCode == 87){
+        isWDown = false;
+    }
+
+     // Z key
+     if (event.keyCode == 90){
+        isZDown = false;
+    }
+});
+
+function moveCamera(camera) {
+
+    var movementDirection = vec3.create();
+    camera.direction[0] = Math.cos(camera.pitch)*Math.cos(camera.yaw);
+    camera.direction[1] = Math.sin(camera.pitch);
+    camera.direction[2] = Math.cos(camera.pitch)*Math.sin(camera.yaw);
+
+    camera.right = vec3.fromValues(-1*Math.sin(camera.yaw), 0, Math.cos(camera.yaw)); 
+
+    //----------------------------------------SIDE_TO_SIDE----------------------------------------------------
+    // negative x direction, move left
+    if(isLDown){
+         
+        vec3.scale(movementDirection, camera.right, -0.1);
+
+        // add old camera position and direction
+        vec3.add(camera.position, camera.position, movementDirection);
+    }
+
+    // positive x direction, move right
+    if(isRDown){
+
+        vec3.scale(movementDirection, camera.right, 0.1);
+
+        // add old camera position and direction
+        vec3.add(camera.position, camera.position, movementDirection);
+    }
+
+    //-----------------------------------------------YAW-------------------------------------------------------
+    // comma, negative x direction, rotate left
+    if(isADown){
+        camera.yaw -=0.02;
+    }
+
+    // period, positive x direction, rotate right
+    if(isSDown){
+        camera.yaw +=0.02;
+    }
+
+    //-----------------------------------------------PITCH-------------------------------------------------------
+
+    // rotate up 
+    if(isWDown){
+        camera.pitch +=0.02;
+    }
+    
+    // rotate down
+    if(isZDown){
+        camera.pitch -=0.02;
+    }
+
+    //----------------------------------------------ZOOM--------------------------------------------------------
+    // negative z direction, zoom in
+    if(isUDown){
+        
+        vec3.scale(movementDirection, camera.direction, 0.1);
+
+        // add old camera position and direction
+        vec3.add(camera.position, camera.position, movementDirection);
+    }
+
+    // positive z direction, zoom out
+    if(isDDown){
+         vec3.scale(movementDirection, camera.direction, -0.1);
+        
+        // add old camera position and direction
+        vec3.add(camera.position, camera.position, movementDirection);
+    }
 }
