@@ -17,6 +17,13 @@ There are two main folders inside the hairGL directory, *examples* and  *project
 
 The *examples* folder contains various object models that were developed in the process of learning webGL while following a tutorial on [Udemy](https://www.udemy.com) by Ahmed Fathy Hagar, [The Extensive WebGL Series Part 1](https://www.udemy.com/the-extensive-webgl-series-part1-low-level-basics/). 
 
-add list of sub-directories
+You can find the following examples in the *examples* folder: 
+- triangle: a basic colored triangle using vertex shaders
+- rectangle: optimized vertices storage and referance using element array buffer and index buffer 
+- cube: an initial foray into the third dimension 
+- fourCubes: an OOP refactor using a cube object
+- cubeInstances: using *gl_InstanceID*, *gl_VertexID* & *gl.drawArraysInstanced* 
+- cubeTexture: using texture coordinates and samplers to add textures to cubes
+- cubeCamera: using a camera object to update the view matrix using the gl-matrix lookAt function
 
-The *project* folder contains the code that emplements the modeling of hair follicles.  
+The *project* folder *will eventually* contain the code that emplements the modeling of hair follicles, as soon as I figure out how to do that.  

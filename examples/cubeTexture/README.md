@@ -1,2 +1,2 @@
 # cube texture
-modeling a cube with texture using webGL texture coordinates.
+modeling three cubes with distinct textures using webGL texture coordinates.
