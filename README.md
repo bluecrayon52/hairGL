@@ -3,6 +3,11 @@ The goal of this project is to eventually model hair follicles using [webGL](htt
 
 This project was built using [Node.js](https://nodejs.org/en/),  [Expess.js](https://expressjs.com), and the node module [gl-matrix](https://www.npmjs.com/package/gl-matrix).
 
+After cloning the repo, you'll just need to install the necessary node modules using the following command: 
+```
+npm install
+``` 
+
 To start the server use the following command from the root folder:
 ```
 node server.js 
@@ -13,17 +18,20 @@ If you instal [nodemon](https://nodemon.io/) you can also use the following comm
 ```
 nodemon server.js
 ```
+
 There are two main folders inside the hairGL directory, *examples* and  *project*.  
 
 The *examples* folder contains various object models that were developed in the process of learning webGL while following a tutorial on [Udemy](https://www.udemy.com) by Ahmed Fathy Hagar, [The Extensive WebGL Series Part 1](https://www.udemy.com/the-extensive-webgl-series-part1-low-level-basics/). 
 
+Once the server is up and running, you can navigate to http://localhost:8080/ in your browser (I used FireFox) and enter the url extension of the example you want to view.  For example, if you want to view the triangle example navigate to http://localhost:8080/triangle. 
+
 You can find the following examples in the *examples* folder: 
-- triangle: a basic colored triangle using vertex shaders
-- rectangle: optimized vertices storage and referance using element array buffer and index buffer 
-- cube: an initial foray into the third dimension 
-- fourCubes: an OOP refactor using a cube object
-- cubeInstances: using *gl_InstanceID*, *gl_VertexID* & *gl.drawArraysInstanced* 
-- cubeTexture: using texture coordinates and samplers to add textures to cubes
-- cubeCamera: using a camera object to update the view matrix using the gl-matrix lookAt function
+- /triangle: a basic colored triangle using vertex shaders
+- /rectangle: optimized vertices storage and referance using element array buffer and index buffer 
+- /cube: an initial foray into the third dimension 
+- /fourCubes: an OOP refactor using a cube object
+- /cubeInstances: using *gl_InstanceID*, *gl_VertexID* & *gl.drawArraysInstanced* 
+- /cubeTexture: using texture coordinates and samplers to add textures to cubes
+- /cubeCamera: using a camera object to update the view matrix using the gl-matrix lookAt function
 
 The *project* folder *will eventually* contain the code that emplements the modeling of hair follicles, as soon as I figure out how to do that.  

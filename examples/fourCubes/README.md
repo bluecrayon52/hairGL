@@ -1,2 +1,4 @@
 # four cubes
-modeling four cubes using webGL
+### modeling four 3D cubes with rotation and translation in the negative z direction using webGL
+
+![alt text](../../images/fourCubes.png "Description goes here")

@@ -1,5 +1,7 @@
 # cube camera
-modeling cubes with a movable camera using the gl-matrix lookAt function. 
+### modeling cubes with a movable camera using the *gl-matrix* *lookAt* function. 
+
+![alt text](../../images/cubeCamera.png "Description goes here")
 
 The camera is controled by the following keys:  
  - The **left arrow key** moves the camera left. 
